@@ -1,0 +1,29 @@
+# Environment and secrets
+.env
+.env.local
+*.key
+*.pem
+credentials.json
+token.json
+
+# n8n local data
+.n8n/
+n8n-data/
+database.sqlite
+
+# Unscrubbed workflow exports
+workflows/*.local.json
+workflows/raw/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editors
+.vscode/
+.idea/
+*.swp
+
+# Logs
+*.log
+npm-debug.log*
