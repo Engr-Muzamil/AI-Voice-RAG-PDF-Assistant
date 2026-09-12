@@ -1,0 +1,353 @@
+{
+  "name": "AI AGENT 1",
+  "nodes": [
+    {
+      "parameters": {
+        "public": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -32,
+        0
+      ],
+      "id": "06c25524-fc72-415d-acf3-72c43d5512fd",
+      "name": "When chat message received",
+      "webhookId": "07ce3ed1-3462-40e1-8aa1-ce358830b1e4"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.chatInput }}",
+        "options": {
+          "systemMessage": "if any one ask you about the any type of news then also doubble check it from the tools   .  and create a short summary of the data.DONT ADD ANY EXTRA WORDS LIKE EXPLAINING MESSAGES OR OTHER EXTRA WORDS."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "d7a6d119-fc17-408a-8f67-0f7a644335e3",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 20
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        144,
+        288
+      ],
+      "id": "e8679c29-7165-4915-9b24-7d07c1d80252",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "url": "https://thehackernews.com/feeds/posts/default",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedReadTool",
+      "typeVersion": 1.2,
+      "position": [
+        272,
+        288
+      ],
+      "id": "42331252-4baa-4bd1-8d97-6c7a24fad6b8",
+      "name": "RSS Read"
+    },
+    {
+      "parameters": {
+        "url": "https://techcrunch.com/feed/",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedReadTool",
+      "typeVersion": 1.2,
+      "position": [
+        368,
+        288
+      ],
+      "id": "ffcc628f-8c0d-4264-a938-3a4637b9866f",
+      "name": "RSS Read1"
+    },
+    {
+      "parameters": {
+        "authentication": "airtableOAuth2Api",
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "appA3PgNq8vWOu1GH",
+          "mode": "list",
+          "cachedResultName": "ai agent 1  latest news data",
+          "cachedResultUrl": "https://airtable.com/appA3PgNq8vWOu1GH"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblHfSEBJsIuCPp7W",
+          "mode": "list",
+          "cachedResultName": "Table 1",
+          "cachedResultUrl": "https://airtable.com/appA3PgNq8vWOu1GH/tblHfSEBJsIuCPp7W"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "SUMMARY": "={{ $('AI Agent').item.json.output }}",
+            "re written data": "={{ $json.text }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "SUMMARY",
+              "displayName": "SUMMARY",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "re written data",
+              "displayName": "re written data",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.2,
+      "position": [
+        848,
+        0
+      ],
+      "id": "7705b45e-f70b-4475-960a-c6629c6d35d5",
+      "name": "Create a record",
+      "credentials": {
+        "airtableOAuth2Api": {
+          "id": "KcL7DFAeEtG3y1Ay",
+          "name": "Airtable account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.output }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "analyse the text carefully and rewrite the text into detailed and attractive post for instagram."
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        528,
+        0
+      ],
+      "id": "3d9476d1-cdb2-4472-99e7-c4f57282dcd8",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        528,
+        176
+      ],
+      "id": "ec20a0c5-b9ed-4860-a589-b49bca81d13f",
+      "name": "Google Gemini Chat Model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "fRQ9CnLTeDa7pmhL",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        32,
+        256
+      ],
+      "id": "82959254-6d53-4346-8632-bb665e3ad96f",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": null,
+          "name": "",
+          "__aiGatewayManaged": true
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "hanzlahussain396@gmail.com",
+        "subject": "data for post",
+        "emailType": "text",
+        "message": "={{ $('Basic LLM Chain').item.json.text }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1056,
+        0
+      ],
+      "id": "dd9c9707-1c15-4a8c-87ce-4a1571a4093f",
+      "name": "Send a message",
+      "webhookId": "3ba8f80d-d751-459f-b4b0-e945f2e0654a",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "dz7BvgOIxPSy9GwH",
+          "name": "Gmail account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS Read": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS Read1": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Create a record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a record": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "85fcdcfa-bdfc-4bde-b157-0e17f12bef8b",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "e7f10033c70514f4de87dd458640af1d1f5cc534f680b626f9f327dc97cd7664"
+  },
+  "nodeGroups": [],
+  "id": "oD1chRzwt4EzqfhU",
+  "tags": []
+}
